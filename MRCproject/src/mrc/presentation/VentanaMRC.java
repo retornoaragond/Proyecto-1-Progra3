@@ -5,7 +5,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.HeadlessException;
+import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import static java.awt.event.KeyEvent.VK_ESCAPE;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import static java.awt.event.MouseEvent.BUTTON1;
@@ -126,6 +131,17 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
     }
 
     public void initListeners() {
+        this.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent evt
+            ) {
+                if (evt.getKeyCode() == VK_ESCAPE) {
+                    seleccionada = null;
+                    repaint();
+                }
+            }
+        }
+        );
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
@@ -192,11 +208,36 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
                 seleccionada = null;
                 repaint();
             } catch (Exception ex) {
-                //generar ventanita del error
-                JOptionPane.showMessageDialog(null, ex.getMessage());
-                System.out.println(ex.getMessage());
-                seleccionada = null;
-                repaint();
+                if (null == ex.getMessage()) {
+                    System.out.println("excepcion nula");
+                    setTitle("MRC");
+                    repaint();
+                } else //generar ventanita del error
+                {
+                    switch (ex.getMessage()) {
+                        case "1":
+                            JOptionPane.showMessageDialog(null, "Error: no puede relacionar una actividad con ella misma");
+                            System.out.println("Error: no puede relacionar una actividad con ella misma");
+                            seleccionada = null;
+                            setTitle("MRC");
+                            repaint();
+                            break;
+                        case "2":
+                            JOptionPane.showMessageDialog(null, "Error: Ya existe una relacion entre " + seleccionada.getName() + " y " + temp.getName() + ".");
+                            System.out.printf("Error: Ya existe una relacion %s y %s", seleccionada.getName(), temp.getName());
+                            seleccionada = null;
+                            setTitle("MRC");
+                            repaint();
+                            break;
+                        default:
+                            JOptionPane.showMessageDialog(null, "Error: Al relacionar " + seleccionada.getName() + " y " + temp.getName() + " genera un ciclo.");
+                            System.out.printf("Error: Al relacionar %s y %s genera un ciclo.", seleccionada.getName(), temp.getName());
+                            seleccionada = null;
+                            setTitle("MRC");
+                            repaint();
+                            break;
+                    }
+                }
             }
         } else {
             seleccionada = null;
@@ -220,7 +261,7 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
         JTextField id = new JTextField();
         JTextField duracion = new JTextField();
         Object[] message = {"Id:", id, "Duracion:", duracion};
-        boolean er = false;
+        boolean er;
         do {
             int option = JOptionPane.showConfirmDialog(null, message, "Actividad", JOptionPane.OK_CANCEL_OPTION);
             if (option == JOptionPane.OK_OPTION) {
@@ -345,7 +386,28 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
         x2 = (x2 - (((x2 - x1) * R) / Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))));
         y2 = (y2 - (((y2 - y1) * R) / Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))));
         g2.drawLine((int) x1, (int) y1, (int) x2, (int) y2);
-        g2.fillOval((int) (x2 - c), (int) (y2 - c), c * 2, c * 2);
+//        g2.fillOval((int) (x2 - c), (int) (y2 - c), c * 2, c * 2);
+        dibujaflecha(new Point((int) x1, (int) y1), new Point((int) x2, (int) y2), g2);
+
+    }
+
+    public void dibujaflecha(Point punto1, Point punto2, Graphics2D g2) {
+        double ang, angSep = 45.0;
+        double tx, ty;
+        int dist = 10;
+        ty = -(punto1.y - punto2.y) * 1.0;
+        tx = (punto1.x - punto2.x) * 1.0;
+        ang = Math.atan(ty / tx);
+        if (tx < 0) {
+            ang += Math.PI;
+        }
+        Point p1 = new Point(), p2 = new Point(), punto = punto2;
+        p1.x = (int) (punto.x + dist * Math.cos(ang - Math.toRadians(angSep)));
+        p1.y = (int) (punto.y - dist * Math.sin(ang - Math.toRadians(angSep)));
+        p2.x = (int) (punto.x + dist * Math.cos(ang + Math.toRadians(angSep)));
+        p2.y = (int) (punto.y - dist * Math.sin(ang + Math.toRadians(angSep)));
+        g2.drawLine(p1.x, p1.y, punto.x, punto.y);
+        g2.drawLine(p2.x, p2.y, punto.x, punto.y);
     }
 
     public void moveCmouse(Actividad a, int mx, int my) {
@@ -365,9 +427,13 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
     }
 
     public void prerelacion(Graphics2D g2) {
-        if (seleccionada != null) {
-            g2.setColor(Color.green);
-            g2.drawLine(seleccionada.getX(), seleccionada.getY(), this.getMousePosition().x, this.getMousePosition().y);
+        try {
+            if (seleccionada != null) {
+                g2.setColor(Color.green);
+                g2.drawLine(seleccionada.getX(), seleccionada.getY(), this.getMousePosition().x, this.getMousePosition().y);
+            }
+        } catch (HeadlessException e) {
+            System.out.println("el mouse salio de la pantalla.");
         }
     }
 

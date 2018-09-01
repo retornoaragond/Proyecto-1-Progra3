@@ -1,6 +1,5 @@
 package mrc.presentation;
 
-import mrc.data.Archivos;
 import mrc.logic.Actividad;
 
 /**
