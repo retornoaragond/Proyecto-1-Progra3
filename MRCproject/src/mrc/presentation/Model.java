@@ -12,12 +12,17 @@ import mrc.logic.Proyecto;
  */
 public class Model extends Observable {
 
+    // <editor-fold desc="Atributos" defaultstate="collapsed">
     Proyecto proyecto;
+    // </editor-fold>
 
+    // <editor-fold desc="Constructores" defaultstate="collapsed">
     public Model() {
         proyecto = new Proyecto();
     }
-
+    // </editor-fold>
+    
+    // <editor-fold desc="Sets y Gets" defaultstate="collapsed">
     public void setP(Proyecto p) {
         this.proyecto = p;
         this.setChanged();
@@ -27,21 +32,18 @@ public class Model extends Observable {
     public Proyecto getPoryect() {
         return proyecto;
     }
-
+    // </editor-fold>
+    
+    // <editor-fold desc="Observer" defaultstate="collapsed">
     @Override
     public void addObserver(Observer o) {
         super.addObserver(o);
         setChanged();
         notifyObservers(null);
     }
-
-    public void agregarActividad(Actividad a) throws Exception {
-        proyecto.agregarActividad(a);
-        System.out.print("\n" + proyecto.rutaCritica() + "\n\n");// se imprime lo cargado
-        System.out.print(proyecto.toString());// se imprime lo cargado
-        setChanged();
-        notifyObservers(null);
-    }
+    // </editor-fold>
+    
+    // <editor-fold desc="Acciones de los Menus" defaultstate="collapsed">
 
     public void abrirArchivo(String ruta) throws Exception {
         Proyecto p = new Proyecto(new Archivos().carga(ruta));
@@ -60,8 +62,18 @@ public class Model extends Observable {
         notifyObservers(null);
     }
     
+    // </editor-fold>
+    
+    // <editor-fold desc="Acciones sobre el grafo" defaultstate="collapsed">
+    public void agregarActividad(Actividad a) throws Exception {
+        proyecto.agregarActividad(a);
+        System.out.print("\n" + proyecto.rutaCritica() + "\n\n");// se imprime lo cargado
+        System.out.print(proyecto.toString());// se imprime lo cargado
+        setChanged();
+        notifyObservers(null);
+    }
+    
     public void relacionar(String a, String b) throws Exception{
-        
         this.proyecto.relacionar(a, b);
         setChanged();
         notifyObservers(null);
@@ -75,4 +87,5 @@ public class Model extends Observable {
         setChanged();
         notifyObservers(null);
     }
+    // </editor-fold>
 }

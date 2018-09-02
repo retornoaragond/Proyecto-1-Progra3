@@ -32,21 +32,6 @@ import mrc.logic.Actividad;
  */
 public class VentanaMRC extends javax.swing.JFrame implements Observer {
 
-    Model model;
-    Controller controller;
-    int R = 25;
-    int D = 50;
-    int Dx = 0;
-    int Dy = 0;
-    int cont = 1;
-    int dibujado = 0;
-    Actividad seleccionada = null;
-    Actividad act_movida = null;
-    private final FileNameExtensionFilter filter
-            = new FileNameExtensionFilter(
-                    "Archivos .xml", "xml"
-            );
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -115,12 +100,15 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
         guardar_proyecto();
     }//GEN-LAST:event_GuardarActionPerformed
 
+    // <editor-fold desc="Constructor" defaultstate="collapsed">
     public VentanaMRC() {
         initComponents();
         initListeners();
         setTitle("MRC");
     }
+    // </editor-fold>
 
+    // <editor-fold desc="Sets" defaultstate="collapsed">
     public void setModel(Model model) {
         this.model = model;
         model.addObserver(this);
@@ -129,7 +117,9 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
     public void setController(Controller controller) {
         this.controller = controller;
     }
+    // </editor-fold>
 
+    // <editor-fold desc="Listeners" defaultstate="collapsed">
     public void initListeners() {
         this.addKeyListener(new KeyAdapter() {
             @Override
@@ -185,7 +175,9 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
             }
         });
     }
+    // </editor-fold>
 
+    // <editor-fold desc="Acciones sobre el Grafo" defaultstate="collapsed">
     public void selec_actividad(int x, int y) {
         seleccionada = seleccionar(x, y);
         if (seleccionada != null) {
@@ -292,6 +284,24 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
         } while (er);
     }
 
+    public void moveCmouse(Actividad a, int mx, int my) {
+        if (Dy < 0) {
+            if (Dx < 0) {
+                controller.moveractividad(a.getName(), mx - abs(Dx), my - abs(Dy));
+            } else {
+                controller.moveractividad(a.getName(), mx + abs(Dx), my - abs(Dy));
+            }
+        } else {
+            if (Dx < 0) {
+                controller.moveractividad(a.getName(), mx - abs(Dx), my + abs(Dy));
+            } else {
+                controller.moveractividad(a.getName(), mx + Dx, my + abs(Dy));
+            }
+        }
+    }
+    // </editor-fold>
+
+    // <editor-fold desc="Acciones con Archivos" defaultstate="collapsed">
     public void abrir_proyecto() {
         JFileChooser file = new JFileChooser();
         file.setFileFilter(filter);
@@ -331,7 +341,9 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
             }
         }
     }
+    // </editor-fold>
 
+    // <editor-fold desc="Dibuja en pantalla" defaultstate="collapsed">
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -410,22 +422,6 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
         g2.drawLine(p2.x, p2.y, punto.x, punto.y);
     }
 
-    public void moveCmouse(Actividad a, int mx, int my) {
-        if (Dy < 0) {
-            if (Dx < 0) {
-                controller.moveractividad(a.getName(), mx - abs(Dx), my - abs(Dy));
-            } else {
-                controller.moveractividad(a.getName(), mx + abs(Dx), my - abs(Dy));
-            }
-        } else {
-            if (Dx < 0) {
-                controller.moveractividad(a.getName(), mx - abs(Dx), my + abs(Dy));
-            } else {
-                controller.moveractividad(a.getName(), mx + Dx, my + abs(Dy));
-            }
-        }
-    }
-
     public void prerelacion(Graphics2D g2) {
         try {
             if (seleccionada != null) {
@@ -437,6 +433,9 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
         }
     }
 
+    // </editor-fold>
+    
+    // <editor-fold desc="Main por Defecto" defaultstate="collapsed">
     /**
      * @param args the command line arguments
      */
@@ -447,32 +446,14 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//
-//                }
-//            }
             UIManager.setLookAndFeel(
                     UIManager.getSystemLookAndFeelClassName());
             JFrame.setDefaultLookAndFeelDecorated(true);
 
-        } catch (ClassNotFoundException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(VentanaMRC.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(VentanaMRC.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(VentanaMRC.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(VentanaMRC.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -484,12 +465,30 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
             }
         });
     }
+    // </editor-fold>
 
+    // <editor-fold desc="Observer" defaultstate="collapsed">
     @Override
     public void update(Observable o, Object arg) {
         this.repaint();
     }
+    // </editor-fold>
 
+    // <editor-fold desc="Atributos y Variables" defaultstate="collapsed">
+    Model model;
+    Controller controller;
+    int R = 25;
+    int D = 50;
+    int Dx = 0;
+    int Dy = 0;
+    int cont = 1;
+    int dibujado = 0;
+    Actividad seleccionada = null;
+    Actividad act_movida = null;
+    private final FileNameExtensionFilter filter
+            = new FileNameExtensionFilter(
+                    "Archivos .xml", "xml"
+            );
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu Archivo;
     private javax.swing.JMenuItem Guardar;
@@ -497,4 +496,6 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
     private javax.swing.JMenuItem Recuperar;
     private javax.swing.JMenuBar jMenuBar1;
     // End of variables declaration//GEN-END:variables
+
+    // </editor-fold>
 }

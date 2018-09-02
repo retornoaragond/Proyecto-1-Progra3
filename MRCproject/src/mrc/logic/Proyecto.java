@@ -27,9 +27,12 @@ public class Proyecto {
     // </editor-fold>
 
     // <editor-fold desc="Metodos" defaultstate="collapsed">
+    
+    // <editor-fold desc="Gets" defaultstate="collapsed">
     public HashMap<String, Actividad> getActividades() {
         return actividades;
     }
+    // </editor-fold>
 
     // <editor-fold desc="Ruta Critica" defaultstate="collapsed">
     public String rutaCritica() { //método que retorna la o las rutas críticas del proyecto
@@ -256,6 +259,7 @@ public class Proyecto {
     }
 
     // </editor-fold>
+    
     // <editor-fold desc="Comprobadores" defaultstate="collapsed">
     public boolean hasCycle() {
         ArrayList<Actividad> visitados = new ArrayList<>();
@@ -285,10 +289,6 @@ public class Proyecto {
         return false;
     }
 
-//    public boolean generaciclo(Actividad temp, Actividad temp2) {
-//        return temp.getEntradas().contains(temp2);
-//    }
-
     public boolean consultaEntradas(Actividad a, ArrayList<Actividad> visit) {//busca en los visitados si sus predecesotres ya fueron visitados
         return a.getEntradas().stream().anyMatch((act) -> (!visit.contains(act)));
     }
@@ -310,6 +310,7 @@ public class Proyecto {
     }
 
     // </editor-fold>
+    
     // <editor-fold desc="ToStrings" defaultstate="collapsed">
     @Override
     public String toString() {
@@ -334,6 +335,7 @@ public class Proyecto {
     // </editor-fold>
 
     // </editor-fold>
+    
     // <editor-fold desc="Atributos" defaultstate="collapsed">
     private final HashMap<String, Actividad> actividades;//lista para las entradas
     Actividad n_i;// nodo inicial
