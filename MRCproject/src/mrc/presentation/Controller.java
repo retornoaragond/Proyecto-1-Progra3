@@ -49,5 +49,9 @@ public class Controller {
     public void moveractividad(String a, int x,int y){
         model.moveractividad(a, x, y);
     }
+    
+    public void eliminar(Actividad a){
+        model.eliminar(a);
+    }
     // </editor-fold>
 }

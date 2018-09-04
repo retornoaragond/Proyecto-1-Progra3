@@ -27,7 +27,6 @@ public class Proyecto {
     // </editor-fold>
 
     // <editor-fold desc="Metodos" defaultstate="collapsed">
-    
     // <editor-fold desc="Gets" defaultstate="collapsed">
     public HashMap<String, Actividad> getActividades() {
         return actividades;
@@ -260,6 +259,27 @@ public class Proyecto {
 
     // </editor-fold>
     
+    // <editor-fold desc="Eliminadores" defaultstate="collapsed">
+    public void eliminar(Actividad a) {
+        this.limpia_ini_fin();
+        ArrayList<Actividad> predecesores = a.getSalidas();
+        ArrayList<Actividad> antecesores = a.getEntradas();
+        a.setSalidas(new ArrayList<>());
+        a.setEntradas(new ArrayList<>());
+        antecesores.forEach((temp) -> {
+            temp.getSalidas().remove(a);
+        });
+        predecesores.forEach((temp) -> {
+            temp.getEntradas().remove(a);
+        });
+        actividades.remove(a.getName());
+        add_inicio();
+        add_final();
+        rutaCritica();
+    }
+
+    // </editor-fold>
+    
     // <editor-fold desc="Comprobadores" defaultstate="collapsed">
     public boolean hasCycle() {
         ArrayList<Actividad> visitados = new ArrayList<>();
@@ -335,7 +355,6 @@ public class Proyecto {
     // </editor-fold>
 
     // </editor-fold>
-    
     // <editor-fold desc="Atributos" defaultstate="collapsed">
     private final HashMap<String, Actividad> actividades;//lista para las entradas
     Actividad n_i;// nodo inicial

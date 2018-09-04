@@ -87,5 +87,12 @@ public class Model extends Observable {
         setChanged();
         notifyObservers(null);
     }
+    
+    public void eliminar(Actividad a){
+        proyecto.eliminar(a);
+        setChanged();
+        notifyObservers(null);
+    }
+    
     // </editor-fold>
 }

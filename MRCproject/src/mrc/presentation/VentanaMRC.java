@@ -14,6 +14,7 @@ import static java.awt.event.KeyEvent.VK_ESCAPE;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import static java.awt.event.MouseEvent.BUTTON1;
+import static java.awt.event.MouseEvent.BUTTON3;
 import java.awt.geom.Ellipse2D;
 import static java.lang.Math.abs;
 import java.util.Observable;
@@ -146,14 +147,22 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
                         }
                     }
                 }
+                if (evt.getButton() == BUTTON3) {
+                    a_eliminar = seleccionar(evt.getX(), evt.getY());
+                    if (a_eliminar != null) {
+                        eliminarActividad(a_eliminar, evt.getX(), evt.getY());
+                    }
+                }
             }
 
             @Override
             public void mousePressed(MouseEvent evt) {
-                act_movida = seleccionar(evt.getX(), evt.getY());
-                if (act_movida != null) {
-                    Dx = act_movida.getX() - evt.getX();
-                    Dy = act_movida.getY() - evt.getY();
+                if (evt.getButton() == BUTTON1) {
+                    act_movida = seleccionar(evt.getX(), evt.getY());
+                    if (act_movida != null) {
+                        Dx = act_movida.getX() - evt.getX();
+                        Dy = act_movida.getY() - evt.getY();
+                    }
                 }
             }
         });
@@ -299,8 +308,24 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
             }
         }
     }
-    // </editor-fold>
 
+    public void eliminarActividad(Actividad a, int mx, int my) {
+        Object[] options = {"Eliminar",
+            "Cancelar"};
+        int option = JOptionPane.showOptionDialog(this,
+                "Desea eliminar la actividad " + a.getName() + "?",
+                "A Silly Question",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //do not use a custom Icon
+                options, //the titles of buttons
+                options[1]); //default button title
+        if (option == JOptionPane.OK_OPTION) {
+            controller.eliminar(a_eliminar);
+        }
+    }
+
+    // </editor-fold>
     // <editor-fold desc="Acciones con Archivos" defaultstate="collapsed">
     public void abrir_proyecto() {
         JFileChooser file = new JFileChooser();
@@ -434,7 +459,6 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
     }
 
     // </editor-fold>
-    
     // <editor-fold desc="Main por Defecto" defaultstate="collapsed">
     /**
      * @param args the command line arguments
@@ -485,6 +509,7 @@ public class VentanaMRC extends javax.swing.JFrame implements Observer {
     int dibujado = 0;
     Actividad seleccionada = null;
     Actividad act_movida = null;
+    Actividad a_eliminar = null;
     private final FileNameExtensionFilter filter
             = new FileNameExtensionFilter(
                     "Archivos .xml", "xml"
